@@ -1,6 +1,6 @@
 ﻿namespace Supermarket.Entity
 {
-    class MultiApplicability : IApplicability
+    public class MultiApplicability : IApplicability
     {
         private readonly int _qualifier;
 

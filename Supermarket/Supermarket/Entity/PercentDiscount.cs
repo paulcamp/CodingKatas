@@ -1,6 +1,6 @@
 ﻿namespace Supermarket.Entity
 {
-    class PercentDiscount : IDiscount
+    public class PercentDiscount : IDiscount
     {
         private readonly decimal _percent;
 

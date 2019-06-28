@@ -1,6 +1,6 @@
 ﻿namespace Supermarket.Entity
 {
-    class SingleApplicability : IApplicability
+    public class SingleApplicability : IApplicability
     {
         public int GetApplicableSize()
         {

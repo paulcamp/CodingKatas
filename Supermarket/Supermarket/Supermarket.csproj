@@ -49,7 +49,12 @@
     <Compile Include="Entity\Promotion.cs" />
     <Compile Include="Entity\SingleApplicability.cs" />
     <Compile Include="Entity\ValueDiscount.cs" />
+    <Compile Include="Persistence\InMemoryProductPersistence.cs" />
+    <Compile Include="Persistence\InMemoryPromotionPersistence.cs" />
+    <Compile Include="Persistence\IProductPersistence.cs" />
+    <Compile Include="Persistence\IPromotionPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategy\IStrategy.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
