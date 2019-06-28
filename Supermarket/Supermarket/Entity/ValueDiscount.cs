@@ -13,6 +13,9 @@
             return _value;
         }
 
-
+        public decimal GetValue()
+        {
+            return _value;
+        }
     }
 }

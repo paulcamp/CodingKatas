@@ -13,5 +13,10 @@
         {
             return original * _percent / (decimal) 100.0;
         }
+
+        public decimal GetPercent()
+        {
+            return _percent;
+        }
     }
 }
