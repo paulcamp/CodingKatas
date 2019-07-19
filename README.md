@@ -1,5 +1,6 @@
 # CodingKatas
 
+Personal Kata Repo
 
 ### [Supermarket kata](http://codekata.com/kata/kata01-supermarket-pricing/)   
 See link for more details
