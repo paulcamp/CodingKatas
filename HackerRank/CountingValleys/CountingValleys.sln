@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.902
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountingValleys", "CountingValleys\CountingValleys.csproj", "{3DC90A2B-4728-44A4-AB15-1A78DD825841}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountingValleys.Tests", "CountingValleys.Tests\CountingValleys.Tests.csproj", "{B8E00CC3-0494-404C-81E5-AED7190D91C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DC90A2B-4728-44A4-AB15-1A78DD825841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DC90A2B-4728-44A4-AB15-1A78DD825841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DC90A2B-4728-44A4-AB15-1A78DD825841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DC90A2B-4728-44A4-AB15-1A78DD825841}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E00CC3-0494-404C-81E5-AED7190D91C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E00CC3-0494-404C-81E5-AED7190D91C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E00CC3-0494-404C-81E5-AED7190D91C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E00CC3-0494-404C-81E5-AED7190D91C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {19764775-295E-4512-B3B5-6C454D2BEF1E}
+	EndGlobalSection
+EndGlobal
