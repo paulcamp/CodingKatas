@@ -10,8 +10,6 @@ namespace Rotate
         {
             //left rotate the array puzzle, with some additional output:
             //for a given array, rotate left by given number of rotations, then record teh index of the maximum element after the rotation.
-            
-            //Followup reading: can we do something similar to ROT encryption to achieve this with optimal performance?
         }
 
         public static List<int> getMaxElementIndexes(List<int> a, List<int> rotate)
