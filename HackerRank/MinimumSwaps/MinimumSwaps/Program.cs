@@ -12,29 +12,25 @@ namespace MinimumSwaps
 
         public static int MinimumSwaps(int[] input)
         {
-
-            var originals = Enumerable.Range(0, input.Length).ToArray();
-            Array.Sort(input, originals);
-
-            //assumes positive sequential values
-            //marks processed swaps with -1
-            //swap with non intersecting cycles
+            //store relative index positions of original
+            var indexPositions = Enumerable.Range(0, input.Length).ToArray();
+            Array.Sort(input, indexPositions);
+            
+            //cycle through the index positions in order and mark each potential swap
 
             int swaps = 0;
             for (int i = 0; i < input.Length; i++)
             {
-                int currentValue = originals[i];
-                if (currentValue < 0) continue;
-                while (currentValue != i)
+                int currentValue = indexPositions[i];
+                if (currentValue < 0) continue; //already processed
+                while (currentValue != i) //not in sequence?
                 {
-                    //make a swap 
-                    int newValue = originals[currentValue];
-                    //dont actually swap, just mark what i would have swapped with as processed
-                    originals[currentValue] = -1; 
-                    currentValue = newValue;
+                    int temp = indexPositions[currentValue]; //cycle
+                    indexPositions[currentValue] = -1; //mark it as processed
+                    currentValue = temp; //ready for next while comparison
                     swaps++;
                 }
-                originals[i] = -1; //mark as processed
+                indexPositions[i] = -1; //mark as processed
             }
             return swaps;
         }
@@ -44,15 +40,14 @@ namespace MinimumSwaps
         {
             var swapsMade = 0;
             var length = input.Length;
-            var temp = input[0];
-
+           
             for (var i = 0; i < length; i++)
             {
                 for (var j = i + 1; j < length; j++)
                 {
                     if (input[i] > input[j])
                     {
-                        temp = input[i];
+                        var temp = input[i];
                         input[i] = input[j];
                         input[j] = temp;
                         swapsMade++;

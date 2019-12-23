@@ -9,6 +9,7 @@ namespace Tests
         {
         }
 
+        [TestCase(new[] { 1,2,3,4,6,5 }, 1)]
         [TestCase(new[] { 8,7,6,5,4,3,2,1}, 4)]
         [TestCase(new[] { 1, 3, 5, 2, 4, 6, 7 }, 3)]
         public void TestSuite(int[] input, int expected)
