@@ -15,7 +15,6 @@ namespace RemindersDemo.Controllers
         // GET: ReminderItems
         public ActionResult Index()
         {
-
             var allTasks = db.TaskItemWithUsers.ToList();
             var allReminders = new List<ReminderItem>();
             var myUser = Guid.Parse(User.Identity.GetUserId());
@@ -26,6 +25,7 @@ namespace RemindersDemo.Controllers
                 //show tasks I have been assigned
                 if (task.AssignedUser == myUser && task.OpenStatus == true)
                 {
+                    //TODO: mapping helper
                     task.AssignedUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
                     task.EscalationUserName =
@@ -43,9 +43,10 @@ namespace RemindersDemo.Controllers
                     });
                 }
 
-                //show tasks I escalated
+                //show tasks I escalated that are overdue
                 if (task.EscalationUser == myUser && task.OpenStatus == true && task.DateDue < DateTime.Today)
                 {
+                    //TODO: mapping helper
                     task.AssignedUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
                     task.EscalationUserName =
@@ -66,6 +67,7 @@ namespace RemindersDemo.Controllers
             return View(allReminders);
         }
         
+        //TODO: some method to mark task as done
 
         protected override void Dispose(bool disposing)
         {
