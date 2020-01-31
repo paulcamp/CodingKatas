@@ -1,0 +1,72 @@
+﻿@model RemindersDemo.Models.TaskItemWithUsers
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>TaskItemWithUsers</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AssignedUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AssignedUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EscalationUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EscalationUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OpenStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OpenStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateDue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateDue)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
