@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<RemindersDemo.Models.TaskItemWithUsers>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Task Administration";
 }
 
-<h2>Index</h2>
+<h2>Task Administration</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -58,6 +58,11 @@
             @Html.ActionLink("Delete", "Delete", new { id=item.Id })
         </td>
     </tr>
+}
+
+@if (!Model.Any())
+{
+    <tr class="table-primary"><td colspan="6">no tasks to display</td></tr>
 }
 
 </table>

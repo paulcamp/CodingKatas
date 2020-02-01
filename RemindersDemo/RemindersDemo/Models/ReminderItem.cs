@@ -20,5 +20,6 @@ namespace RemindersDemo.Models
         [DataType(DataType.Date)]
         public DateTime DateDue { get; set; }
         public bool OverDue { get; set; }
+        public bool EscalatedByYou { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using RemindersDemo.Models;
@@ -32,6 +33,7 @@ namespace RemindersDemo.Controllers
                         db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
                     allReminders.Add(new ReminderItem()
                     {
+                        Id = task.Id,
                         AssignedUser = task.AssignedUser,
                         AssignedUserName = task.AssignedUserName,
                         EscalationUser = task.EscalationUser,
@@ -53,6 +55,7 @@ namespace RemindersDemo.Controllers
                         db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
                     allReminders.Add(new ReminderItem()
                     {
+                        Id = task.Id,
                         AssignedUser = task.AssignedUser,
                         AssignedUserName = task.AssignedUserName,
                         EscalationUser = task.EscalationUser,
@@ -60,14 +63,61 @@ namespace RemindersDemo.Controllers
                         DateCreated = task.DateCreated,
                         DateDue = task.DateDue,
                         OpenStatus = task.OpenStatus,
-                        OverDue = task.DateDue < DateTime.Today
+                        OverDue = true,
+                        EscalatedByYou = true
+                                  
                     });
                 }
             }
-            return View(allReminders);
+            return View(allReminders.OrderByDescending(_ => _.DateDue));
         }
-        
-        //TODO: some method to mark task as done
+
+        // GET: TaskItemWithUsers/Delete/5
+        public ActionResult Complete(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TaskItemWithUsers task = db.TaskItemWithUsers.Find(id);
+            if (task == null)
+            {
+                return HttpNotFound();
+            }
+
+            //TODO: refactor
+            var itemToComplete = new ReminderItem()
+            {
+                Id = task.Id,
+                AssignedUser = task.AssignedUser,
+                AssignedUserName = task.AssignedUserName,
+                EscalationUser = task.EscalationUser,
+                EscalationUserName = task.EscalationUserName,
+                DateCreated = task.DateCreated,
+                DateDue = task.DateDue,
+                OpenStatus = task.OpenStatus,
+                OverDue = task.DateDue < DateTime.Today
+            };
+
+            return View(itemToComplete);
+        }
+
+        // POST: TaskItemWithUsers/Delete/5
+        [HttpPost, ActionName("Complete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CompleteConfirmed(Guid id)
+        {
+            TaskItemWithUsers taskItemWithUsers = db.TaskItemWithUsers.Find(id);
+            if (taskItemWithUsers == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            taskItemWithUsers.OpenStatus = false;
+            //db.TaskItemWithUsers.Remove(taskItemWithUsers);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
         protected override void Dispose(bool disposing)
         {

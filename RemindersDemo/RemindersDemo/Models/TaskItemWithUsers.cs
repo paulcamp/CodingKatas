@@ -26,9 +26,11 @@ namespace RemindersDemo.Models
         public bool OpenStatus { get; set; }
         [Required]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateCreated { get; set; }
         [Required]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateDue { get; set; }
         [NotMapped]
         public List<SelectListItem> AvailableUsers { get; set; }
