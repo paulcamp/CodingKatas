@@ -7,39 +7,42 @@
 <h2>Task List</h2>
 
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AssignedUserName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EscalationUserName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OpenStatus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateDue)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OverDue)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EscalatedByYou)
-        </th>
-        <th></th>
-        <th></th>
-    </tr>
-
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AssignedUserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EscalationUserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OpenStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateDue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OverDue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EscalatedByYou)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    
+    <tbody>
     @foreach (var item in Model)
     {
         //highlight overdue rows
-        var rowClass = item.OverDue ? "table-warning" : "table-active";
+        var rowClass = item.OverDue ? "danger" : "info";
 
         <tr class="@rowClass">
             <td>
@@ -67,16 +70,16 @@
                 @Html.DisplayFor(modelItem => item.EscalatedByYou)
             </td>
             <td>
-                @Html.ActionLink("Complete", "Complete", new { id = item.Id })
+                @Html.ActionLink("Complete", "Complete", new {id = item.Id})
             </td>
         </tr>
     }
-    
+
     @if (!Model.Any())
     {
-        <tr class="table-primary"><td colspan="10">no tasks to display</td></tr>
+        <tr class="warning"><td colspan="10">no tasks to display</td></tr>
     }
+    </tbody>
 
-    
 
 </table>

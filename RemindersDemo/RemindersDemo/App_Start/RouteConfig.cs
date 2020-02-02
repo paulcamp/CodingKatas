@@ -13,7 +13,7 @@ namespace RemindersDemo
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "TaskItemWithUsers", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "ReminderItems", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

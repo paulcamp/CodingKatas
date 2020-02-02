@@ -16,8 +16,10 @@ namespace RemindersDemo.Models
         [UIHint("_IsOpen")]
         public bool OpenStatus { get; set; }
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateCreated { get; set; }
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateDue { get; set; }
         public bool OverDue { get; set; }
         public bool EscalatedByYou { get; set; }

@@ -55,9 +55,12 @@ namespace RemindersDemo.Controllers
 
             return View(new TaskItemWithUsers()
             {
+                //set defaults for a new task
                 OpenStatus = true,
                 EscalationUser = myUser,
                 DateCreated = DateTime.Today,
+                DateDue = DateTime.Today,
+                //populate the user dropdown data
                 AvailableUsers = availableUsers
             } );
         }

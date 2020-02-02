@@ -5,22 +5,37 @@
 <div class="jumbotron">
     <h1>Task List Demo</h1>
     <p class="lead">Code First implementation using ASP.NET MVC scaffolding</p>
-   
+
 </div>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Outstanding</h2>
+    <div>
+        <h2>Instructions</h2>
         <ul>
-            <li>TODO: </li>
-
-            <li>row highlighting </li>
+            <li>Register at least 2 users, 1 for escalating tasks, 1 for escalations to be assigned to</li>
+            <li>Login in as user 1</li>
+            <li>In the task administration screen, assign a bunch of tasks to the other user and with a due date in the future</li>
+            <li>In the task administration screen, assign a bunch of tasks to the other user and with a due date in the past</li>
+            <li>In the task list screen, view the tasks that are overdue that you have escalated</li>
+            <li>Log Off User 1</li>
+            <li>Login in as user 2</li>
+            <li>In the task list screen, view the tasks that have been assigned to you</li>
+            <li>Complete the tasks as necessary, overdue task rows will be highlighted</li>
+            <li>---</li>
+            <li>bug, if its overdue and assigned by you you get 2 entries in the list</li>
             <li>unit tests around mapping logic</li>
-            <li>instructions in home page (this) </li>
-            <li>consistent date formats on all screens</li>
-            <li>readme.MD</li>
-            <li>reverse chronological on which field - chose due date </li>
+            <li>readme.MD or txt for zip file</li>
+        
 
+        </ul>
+        
+        <h2>Assumptions</h2>
+        <ul>
+            <li>An escalation is the same as assigning a task to a user</li>
+            <li>A user can escalate/assign a task to themselves</li>
+            <li>For this Demo, All users can view the task administration screen. It is assumed that role based permissions could be a future requirement</li>
+            <li>Sql Local DB is ok to be used in this demo as it is part of the visual studio installation when selecting .NET desktop development</li>
+            <li>Task list reverse chronological order didn't specify which date field to use - I chose due date</li>
         </ul>
     </div>
 

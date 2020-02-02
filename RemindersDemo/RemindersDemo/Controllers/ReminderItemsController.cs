@@ -24,7 +24,7 @@ namespace RemindersDemo.Controllers
             foreach (var task in allTasks)
             {
                 //show tasks I have been assigned
-                if (task.AssignedUser == myUser && task.OpenStatus == true)
+                if (task.AssignedUser == myUser && task.OpenStatus)
                 {
                     //TODO: mapping helper
                     task.AssignedUserName =
@@ -38,6 +38,7 @@ namespace RemindersDemo.Controllers
                         AssignedUserName = task.AssignedUserName,
                         EscalationUser = task.EscalationUser,
                         EscalationUserName = task.EscalationUserName,
+                        Description = task.Description,
                         DateCreated = task.DateCreated,
                         DateDue = task.DateDue,
                         OpenStatus = task.OpenStatus,
@@ -46,8 +47,10 @@ namespace RemindersDemo.Controllers
                 }
 
                 //show tasks I escalated that are overdue
-                if (task.EscalationUser == myUser && task.OpenStatus == true && task.DateDue < DateTime.Today)
+                if (task.EscalationUser == myUser && task.OpenStatus && task.DateDue < DateTime.Today)
                 {
+                    //TODO: check not already in list
+                    
                     //TODO: mapping helper
                     task.AssignedUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
@@ -61,6 +64,7 @@ namespace RemindersDemo.Controllers
                         EscalationUser = task.EscalationUser,
                         EscalationUserName = task.EscalationUserName,
                         DateCreated = task.DateCreated,
+                        Description = task.Description,
                         DateDue = task.DateDue,
                         OpenStatus = task.OpenStatus,
                         OverDue = true,
@@ -72,7 +76,7 @@ namespace RemindersDemo.Controllers
             return View(allReminders.OrderByDescending(_ => _.DateDue));
         }
 
-        // GET: TaskItemWithUsers/Delete/5
+        // GET: TaskItemWithUsers/Complete/Guid
         public ActionResult Complete(Guid? id)
         {
             if (id == null)
@@ -85,7 +89,7 @@ namespace RemindersDemo.Controllers
                 return HttpNotFound();
             }
 
-            //TODO: refactor
+            //TODO: refactor with mapping helper
             var itemToComplete = new ReminderItem()
             {
                 Id = task.Id,
@@ -96,13 +100,14 @@ namespace RemindersDemo.Controllers
                 DateCreated = task.DateCreated,
                 DateDue = task.DateDue,
                 OpenStatus = task.OpenStatus,
+                Description = task.Description,
                 OverDue = task.DateDue < DateTime.Today
             };
 
             return View(itemToComplete);
         }
 
-        // POST: TaskItemWithUsers/Delete/5
+        // POST: TaskItemWithUsers/Complete/Guid
         [HttpPost, ActionName("Complete")]
         [ValidateAntiForgeryToken]
         public ActionResult CompleteConfirmed(Guid id)
