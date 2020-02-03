@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -50,7 +51,6 @@ namespace RemindersDemo.Controllers
         // GET: TaskItemWithUsers/Create
         public ActionResult Create()
         {
-            var availableUsers = db.Users.Select(user => new SelectListItem {Text = user.Email, Value = user.Id}).ToList();
             var myUser = Guid.Parse(User.Identity.GetUserId());
 
             return View(new TaskItemWithUsers()
@@ -61,7 +61,7 @@ namespace RemindersDemo.Controllers
                 DateCreated = DateTime.Today,
                 DateDue = DateTime.Today,
                 //populate the user dropdown data
-                AvailableUsers = availableUsers
+                AvailableUsers = GetAllUsersExceptCurrent()
             } );
         }
 
@@ -96,8 +96,7 @@ namespace RemindersDemo.Controllers
                 return HttpNotFound();
             }
 
-            var availableUsers = db.Users.Select(user => new SelectListItem { Text = user.Email, Value = user.Id }).ToList();
-            taskItemWithUsers.AvailableUsers = availableUsers;
+            taskItemWithUsers.AvailableUsers = GetAllUsersExceptCurrent();     
             return View(taskItemWithUsers);
         }
 
@@ -143,6 +142,13 @@ namespace RemindersDemo.Controllers
             db.TaskItemWithUsers.Remove(taskItemWithUsers);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        private List<SelectListItem> GetAllUsersExceptCurrent()
+        {
+            //Get all users except the current user
+            var myUser = User.Identity.GetUserId();
+            return (from dbUser in db.Users where dbUser.Id != myUser select new SelectListItem() {Text = dbUser.Email, Value = dbUser.Id}).ToList();
         }
 
         protected override void Dispose(bool disposing)
