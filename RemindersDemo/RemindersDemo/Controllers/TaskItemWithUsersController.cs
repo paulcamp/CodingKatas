@@ -17,7 +17,7 @@ namespace RemindersDemo.Controllers
         // GET: TaskItemWithUsers
         public ActionResult Index()
         {
-            var allTasks = db.TaskItemWithUsers.ToList();
+            var allTasks = db.TaskItemWithUsers.OrderByDescending(_ => _.DateCreated).ToList();
 
             //fill in the human readable usernames
             foreach (var task in allTasks)
