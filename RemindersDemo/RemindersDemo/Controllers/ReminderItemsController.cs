@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using RemindersDemo.Mappers;
 using RemindersDemo.Models;
 
 namespace RemindersDemo.Controllers
@@ -20,59 +21,34 @@ namespace RemindersDemo.Controllers
             var allReminders = new List<ReminderItem>();
             var myUser = Guid.Parse(User.Identity.GetUserId());
 
-            //TODO: map to reminder item - do in testable helper and reuse code in details method
+            //map to reminder items 
             foreach (var task in allTasks)
             {
                 //show tasks I have been assigned
                 if (task.AssignedUser == myUser && task.OpenStatus)
                 {
-                    //TODO: mapping helper
                     task.AssignedUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
                     task.EscalationUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
-                    allReminders.Add(new ReminderItem()
-                    {
-                        Id = task.Id,
-                        AssignedUser = task.AssignedUser,
-                        AssignedUserName = task.AssignedUserName,
-                        EscalationUser = task.EscalationUser,
-                        EscalationUserName = task.EscalationUserName,
-                        Description = task.Description,
-                        DateCreated = task.DateCreated,
-                        DateDue = task.DateDue,
-                        OpenStatus = task.OpenStatus,
-                        OverDue = task.DateDue < DateTime.Today
-                    });
+
+                    var reminderItem = ModelMapper.Map(task, myUser);
+                    allReminders.Add(reminderItem);
                 }
 
                 //show tasks I escalated that are overdue
                 if (task.EscalationUser == myUser && task.OpenStatus && task.DateDue < DateTime.Today)
                 {
-                    //TODO: check not already in list
-                    
-                    //TODO: mapping helper
                     task.AssignedUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
                     task.EscalationUserName =
                         db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
-                    allReminders.Add(new ReminderItem()
-                    {
-                        Id = task.Id,
-                        AssignedUser = task.AssignedUser,
-                        AssignedUserName = task.AssignedUserName,
-                        EscalationUser = task.EscalationUser,
-                        EscalationUserName = task.EscalationUserName,
-                        DateCreated = task.DateCreated,
-                        Description = task.Description,
-                        DateDue = task.DateDue,
-                        OpenStatus = task.OpenStatus,
-                        OverDue = true,
-                        EscalatedByYou = true
-                                  
-                    });
+                    var reminderItem = ModelMapper.Map(task, myUser);
+                    allReminders.Add(reminderItem);
                 }
             }
+
+            //present in reverse chronological order
             return View(allReminders.OrderByDescending(_ => _.DateDue));
         }
 
@@ -89,22 +65,9 @@ namespace RemindersDemo.Controllers
                 return HttpNotFound();
             }
 
-            //TODO: refactor with mapping helper
-            var itemToComplete = new ReminderItem()
-            {
-                Id = task.Id,
-                AssignedUser = task.AssignedUser,
-                AssignedUserName = task.AssignedUserName,
-                EscalationUser = task.EscalationUser,
-                EscalationUserName = task.EscalationUserName,
-                DateCreated = task.DateCreated,
-                DateDue = task.DateDue,
-                OpenStatus = task.OpenStatus,
-                Description = task.Description,
-                OverDue = task.DateDue < DateTime.Today
-            };
-
-            return View(itemToComplete);
+            var myUser = Guid.Parse(User.Identity.GetUserId());
+            var reminderItem = ModelMapper.Map(task, myUser);
+            return View(reminderItem);
         }
 
         // POST: TaskItemWithUsers/Complete/Guid
@@ -119,7 +82,6 @@ namespace RemindersDemo.Controllers
             }
 
             taskItemWithUsers.OpenStatus = false;
-            //db.TaskItemWithUsers.Remove(taskItemWithUsers);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
