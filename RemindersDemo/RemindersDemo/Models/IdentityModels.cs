@@ -18,7 +18,7 @@ namespace RemindersDemo.Models
         }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -30,7 +30,7 @@ namespace RemindersDemo.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<RemindersDemo.Models.TaskItemWithUsers> TaskItemWithUsers { get; set; }
+        public System.Data.Entity.DbSet<RemindersDemo.Models.TaskItemWithUsers> Tasks { get; set; }
         
     }
 }

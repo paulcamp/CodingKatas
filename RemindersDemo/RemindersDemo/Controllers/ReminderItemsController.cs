@@ -1,53 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using RemindersDemo.Mappers;
 using RemindersDemo.Models;
+using RemindersDemo.Services;
 
 namespace RemindersDemo.Controllers
 {
     [Authorize]
     public class ReminderItemsController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IApplicationDbContext _db;
+        private readonly ITaskService _taskService;
+
+        public ReminderItemsController(IApplicationDbContext db, ITaskService taskService)
+        {
+            _db = db;
+            _taskService = taskService;
+        }
 
         // GET: ReminderItems
         public ActionResult Index()
         {
-            var allTasks = db.TaskItemWithUsers.ToList();
-            var allReminders = new List<ReminderItem>();
-            var myUser = Guid.Parse(User.Identity.GetUserId());
-
-            //map to reminder items 
-            foreach (var task in allTasks)
-            {
-                //show tasks I have been assigned
-                if (task.AssignedUser == myUser && task.OpenStatus)
-                {
-                    task.AssignedUserName =
-                        db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
-                    task.EscalationUserName =
-                        db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
-
-                    var reminderItem = ModelMapper.Map(task, myUser);
-                    allReminders.Add(reminderItem);
-                }
-
-                //show tasks I escalated that are overdue
-                if (task.EscalationUser == myUser && task.OpenStatus && task.DateDue < DateTime.Today)
-                {
-                    task.AssignedUserName =
-                        db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
-                    task.EscalationUserName =
-                        db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
-                    var reminderItem = ModelMapper.Map(task, myUser);
-                    allReminders.Add(reminderItem);
-                }
-            }
-
+            var myUser =User.Identity.GetUserId();
+            var allReminders = _taskService.GetReminders(myUser);
+            
             //present in reverse chronological order
             return View(allReminders.OrderByDescending(_ => _.DateDue));
         }
@@ -59,7 +38,7 @@ namespace RemindersDemo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaskItemWithUsers task = db.TaskItemWithUsers.Find(id);
+            TaskItemWithUsers task = _db.Tasks.Find(id);
             if (task == null)
             {
                 return HttpNotFound();
@@ -75,14 +54,14 @@ namespace RemindersDemo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CompleteConfirmed(Guid id)
         {
-            TaskItemWithUsers taskItemWithUsers = db.TaskItemWithUsers.Find(id);
+            TaskItemWithUsers taskItemWithUsers = _db.Tasks.Find(id);
             if (taskItemWithUsers == null)
             {
                 return RedirectToAction("Index");
             }
 
             taskItemWithUsers.OpenStatus = false;
-            db.SaveChanges();
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -90,7 +69,7 @@ namespace RemindersDemo.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

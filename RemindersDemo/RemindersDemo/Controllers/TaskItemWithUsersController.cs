@@ -1,31 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using RemindersDemo.Models;
+using RemindersDemo.Services;
 
 namespace RemindersDemo.Controllers
 {
     [Authorize]
     public class TaskItemWithUsersController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IApplicationDbContext _db;
+        private readonly IUserService _userService;
+        private readonly ITaskService _taskService;
 
+        public TaskItemWithUsersController(IApplicationDbContext db, IUserService userService, ITaskService taskService)
+        {
+            _db = db;
+            _userService = userService;
+            _taskService = taskService;
+        }
+        
         // GET: TaskItemWithUsers
         public ActionResult Index()
         {
-            var allTasks = db.TaskItemWithUsers.OrderByDescending(_ => _.DateCreated).ToList();
-
-            //fill in the human readable usernames
-            foreach (var task in allTasks)
-            {
-                task.AssignedUserName = db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
-                task.EscalationUserName = db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
-            }
-
+            var allTasks = _taskService.GetFullyPopulatedTasks();
             return View(allTasks);
         }
 
@@ -36,33 +37,34 @@ namespace RemindersDemo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaskItemWithUsers task = db.TaskItemWithUsers.Find(id);
+            TaskItemWithUsers task = _db.Tasks.Find(id);
             if (task == null)
             {
                 return HttpNotFound();
             }
 
             //fill in the human readable usernames
-            task.AssignedUserName = db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
-            task.EscalationUserName = db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
+            task.AssignedUserName = _db.Users.FirstOrDefault(x => x.Id == task.AssignedUser.ToString())?.UserName;
+            task.EscalationUserName = _db.Users.FirstOrDefault(x => x.Id == task.EscalationUser.ToString())?.UserName;
             return View(task);
         }
 
         // GET: TaskItemWithUsers/Create
         public ActionResult Create()
         {
-            var myUser = Guid.Parse(User.Identity.GetUserId());
+            var myUser = User.Identity.GetUserId();
+            var myUserGuid = Guid.Parse(myUser);
 
             return View(new TaskItemWithUsers()
             {
                 //set defaults for a new task
                 OpenStatus = true,
-                EscalationUser = myUser,
+                EscalationUser = myUserGuid,
                 DateCreated = DateTime.Today,
                 DateDue = DateTime.Today,
                 //populate the user dropdown data
-                AvailableUsers = GetAllUsersExceptCurrent()
-            } );
+                AvailableUsers = _userService.GetAllUsersExceptCurrent(myUser).ToList()
+        } );
         }
 
         // POST: TaskItemWithUsers/Create
@@ -73,8 +75,8 @@ namespace RemindersDemo.Controllers
             if (ModelState.IsValid)
             {
                 taskItemWithUsers.Id = Guid.NewGuid();
-                db.TaskItemWithUsers.Add(taskItemWithUsers);
-                db.SaveChanges();
+                _db.Tasks.Add(taskItemWithUsers);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -89,14 +91,15 @@ namespace RemindersDemo.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var taskItemWithUsers = db.TaskItemWithUsers.Find(id);
+            var taskItemWithUsers = _db.Tasks.Find(id);
             
             if (taskItemWithUsers == null)
             {
                 return HttpNotFound();
             }
 
-            taskItemWithUsers.AvailableUsers = GetAllUsersExceptCurrent();     
+            var myUser = User.Identity.GetUserId();
+            taskItemWithUsers.AvailableUsers = _userService.GetAllUsersExceptCurrent(myUser).ToList();
             return View(taskItemWithUsers);
         }
 
@@ -107,8 +110,8 @@ namespace RemindersDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(taskItemWithUsers).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(taskItemWithUsers).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(taskItemWithUsers);
@@ -121,7 +124,7 @@ namespace RemindersDemo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaskItemWithUsers taskItemWithUsers = db.TaskItemWithUsers.Find(id);
+            TaskItemWithUsers taskItemWithUsers = _db.Tasks.Find(id);
             if (taskItemWithUsers == null)
             {
                 return HttpNotFound();
@@ -134,28 +137,21 @@ namespace RemindersDemo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            TaskItemWithUsers taskItemWithUsers = db.TaskItemWithUsers.Find(id);
+            TaskItemWithUsers taskItemWithUsers = _db.Tasks.Find(id);
             if (taskItemWithUsers == null)
             {
                 return RedirectToAction("Index");
             }
-            db.TaskItemWithUsers.Remove(taskItemWithUsers);
-            db.SaveChanges();
+            _db.Tasks.Remove(taskItemWithUsers);
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
-
-        private List<SelectListItem> GetAllUsersExceptCurrent()
-        {
-            //Get all users except the current user
-            var myUser = User.Identity.GetUserId();
-            return (from dbUser in db.Users where dbUser.Id != myUser select new SelectListItem() {Text = dbUser.Email, Value = dbUser.Id}).ToList();
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }
